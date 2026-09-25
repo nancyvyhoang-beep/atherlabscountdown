@@ -340,8 +340,8 @@
       <div class="w-full flex-1 bg-black flex flex-col items-center justify-center relative min-h-[300px] sm:min-h-[420px] overflow-hidden">
         
         <!-- Native Video Element -->
-        <video id="briefingLocalVideo" class="w-full h-full max-h-[58vh] object-contain bg-black" controls autoplay playsinline preload="auto">
-          <source id="briefingVideoSource" src="./videos/game1.mp4" type="video/mp4">
+        <video id="briefingLocalVideo" class="w-full h-full max-h-[58vh] object-contain bg-black" controls playsinline preload="none">
+          <source id="briefingVideoSource" src="" type="video/mp4">
           Trình duyệt của bạn không hỗ trợ phát thẻ video HTML5.
         </video>
 
@@ -1081,23 +1081,23 @@
       const errorOverlay = document.getElementById('videoErrorOverlay');
 
       titleEl.textContent = current.title;
-      statusPill.textContent = `Đang phát: ${current.videoSrc}`;
+      statusPill.textContent = `Tập tin: ${current.videoSrc}`;
       document.getElementById('videoErrorPathText').innerHTML = `Đường dẫn dự kiến: <code class="text-volt">${current.videoSrc}</code>`;
 
       errorOverlay.classList.add('hidden');
       errorOverlay.classList.remove('flex');
 
-      srcEl.src = current.videoSrc;
-      videoEl.load();
+      // Chỉ nạp nguồn khi mở modal và tuyệt đối KHÔNG tự động phát
+      if (srcEl.getAttribute('src') !== current.videoSrc) {
+        srcEl.src = current.videoSrc;
+        videoEl.load();
+      }
+      videoEl.pause();
 
       videoEl.onerror = () => {
         errorOverlay.classList.remove('hidden');
         errorOverlay.classList.add('flex');
       };
-
-      videoEl.play().catch(e => {
-        // Autoplay may need click or file not found
-      });
 
       modal.classList.remove('hidden');
       modal.classList.add('flex');
@@ -1107,6 +1107,7 @@
       const modal = document.getElementById('videoBriefingModal');
       const videoEl = document.getElementById('briefingLocalVideo');
       videoEl.pause();
+      videoEl.currentTime = 0; // Trả về đầu video khi đóng
       modal.classList.add('hidden');
       modal.classList.remove('flex');
     }
@@ -1141,6 +1142,11 @@
 
     // --- 10. GET READY 3 - 2 - 1 CLIMAX COUNTDOWN ---
     function launchGetReadyCountdown() {
+      const videoEl = document.getElementById('briefingLocalVideo');
+      if (videoEl) {
+        videoEl.pause();
+        videoEl.currentTime = 0;
+      }
       closeVideoModal();
       const overlay = document.getElementById('getReadyOverlay');
       const numEl = document.getElementById('getReadyNumber');
