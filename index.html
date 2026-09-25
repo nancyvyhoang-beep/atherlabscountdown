@@ -41,6 +41,12 @@
       font-variant-numeric: tabular-nums lining-nums;
       font-feature-settings: "tnum" 1;
     }
+    .tab-time-val {
+      font-variant-numeric: tabular-nums lining-nums;
+      font-feature-settings: "tnum" 1;
+      display: inline-block;
+      text-align: right;
+    }
     .grid-cell-4x4 {
       aspect-ratio: 1 / 1;
       transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
@@ -54,32 +60,32 @@
   <canvas id="fxCanvas" class="fixed inset-0 pointer-events-none z-50 w-full h-full"></canvas>
 
   <!-- TOP BAR: SESSION SWITCHER & STAGE HUD -->
-  <header id="stageTopBar" class="w-full px-4 sm:px-8 pt-4 pb-2 flex flex-wrap items-center justify-between gap-4 z-30 transition-opacity duration-300">
-    <!-- 4 Challenge Session Tabs -->
-    <nav class="flex items-center gap-1.5 sm:gap-2.5 p-1.5 bg-[#0D0F12]/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-x-auto max-w-full">
-      <button onclick="switchChallenge(1)" id="tab-btn-1" class="session-tab px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider transition-all flex items-center gap-2 bg-volt text-black shadow-[0_0_16px_rgba(213,255,0,0.4)]">
-        <span class="w-5 h-5 rounded-md bg-black/15 flex items-center justify-center text-[10px]">1</span>
-        <span>LINE PASS</span>
-        <span id="tab-time-1" class="text-[11px] opacity-80 font-mono font-bold ml-0.5">03:00</span>
+  <header id="stageTopBar" class="sticky top-0 w-full px-4 sm:px-8 pt-3 pb-3 flex flex-wrap items-center justify-between gap-4 z-40 bg-[#050709]/90 backdrop-blur-xl border-b border-white/5 transition-none">
+    <!-- 4 Challenge Session Tabs (CỐ ĐỊNH KÍCH THƯỚC & KHÔNG GIẬT KHUNG KHI ĐẾM) -->
+    <nav class="flex items-center gap-1.5 sm:gap-2 p-1.5 bg-[#0D0F12]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-x-auto max-w-full flex-shrink-0 select-none">
+      <button onclick="switchChallenge(1)" id="tab-btn-1" class="session-tab flex-shrink-0 whitespace-nowrap px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider transition-colors duration-150 flex items-center gap-2 bg-volt text-black shadow-[0_0_16px_rgba(213,255,0,0.4)]">
+        <span class="w-5 h-5 rounded-md bg-black/15 flex items-center justify-center text-[10px] flex-shrink-0">1</span>
+        <span class="flex-shrink-0">LINE PASS</span>
+        <span id="tab-time-1" class="tab-time-val font-mono font-bold text-[11px] min-w-[38px] text-right inline-block tabular-nums flex-shrink-0 opacity-90">03:00</span>
       </button>
 
-      <button onclick="switchChallenge(2)" id="tab-btn-2" class="session-tab px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider text-white/70 hover:text-white hover:bg-white/5 transition-all flex items-center gap-2">
-        <span class="w-5 h-5 rounded-md bg-white/10 flex items-center justify-center text-[10px]">2</span>
-        <span>CUP TOWER</span>
-        <span id="tab-time-2" class="text-[11px] opacity-60 font-mono font-bold ml-0.5">03:00</span>
+      <button onclick="switchChallenge(2)" id="tab-btn-2" class="session-tab flex-shrink-0 whitespace-nowrap px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider text-white/70 hover:text-white hover:bg-white/5 transition-colors duration-150 flex items-center gap-2">
+        <span class="w-5 h-5 rounded-md bg-white/10 flex items-center justify-center text-[10px] flex-shrink-0">2</span>
+        <span class="flex-shrink-0">CUP TOWER</span>
+        <span id="tab-time-2" class="tab-time-val font-mono font-bold text-[11px] min-w-[38px] text-right inline-block tabular-nums flex-shrink-0 opacity-60">03:00</span>
       </button>
 
-      <button onclick="switchChallenge(3)" id="tab-btn-3" class="session-tab px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider text-white/70 hover:text-white hover:bg-white/5 transition-all flex items-center gap-2">
-        <span class="w-5 h-5 rounded-md bg-white/10 flex items-center justify-center text-[10px]">3</span>
-        <span>MAZE RELAY</span>
-        <span class="px-1.5 py-0.5 rounded text-[9px] font-black bg-volt/20 text-volt border border-volt/40">BẢN ĐỒ</span>
-        <span id="tab-time-3" class="text-[11px] opacity-60 font-mono font-bold ml-0.5">03:00</span>
+      <button onclick="switchChallenge(3)" id="tab-btn-3" class="session-tab flex-shrink-0 whitespace-nowrap px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider text-white/70 hover:text-white hover:bg-white/5 transition-colors duration-150 flex items-center gap-2">
+        <span class="w-5 h-5 rounded-md bg-white/10 flex items-center justify-center text-[10px] flex-shrink-0">3</span>
+        <span class="flex-shrink-0">MAZE RELAY</span>
+        <span class="px-1.5 py-0.5 rounded text-[9px] font-black bg-volt/20 text-volt border border-volt/40 flex-shrink-0">BẢN ĐỒ</span>
+        <span id="tab-time-3" class="tab-time-val font-mono font-bold text-[11px] min-w-[38px] text-right inline-block tabular-nums flex-shrink-0 opacity-60">03:00</span>
       </button>
 
-      <button onclick="switchChallenge(4)" id="tab-btn-4" class="session-tab px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider text-white/70 hover:text-white hover:bg-white/5 transition-all flex items-center gap-2">
-        <span class="w-5 h-5 rounded-md bg-white/10 flex items-center justify-center text-[10px]">4</span>
-        <span>BALL LINE RUSH</span>
-        <span id="tab-time-4" class="text-[11px] opacity-60 font-mono font-bold ml-0.5">03:00</span>
+      <button onclick="switchChallenge(4)" id="tab-btn-4" class="session-tab flex-shrink-0 whitespace-nowrap px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider text-white/70 hover:text-white hover:bg-white/5 transition-colors duration-150 flex items-center gap-2">
+        <span class="w-5 h-5 rounded-md bg-white/10 flex items-center justify-center text-[10px] flex-shrink-0">4</span>
+        <span class="flex-shrink-0">BALL LINE RUSH</span>
+        <span id="tab-time-4" class="tab-time-val font-mono font-bold text-[11px] min-w-[38px] text-right inline-block tabular-nums flex-shrink-0 opacity-60">03:00</span>
       </button>
     </nav>
 
@@ -821,13 +827,16 @@
     function switchChallenge(id) {
       activeChallengeId = id;
 
-      // Update Top Tabs
+      // Update Top Tabs (Fixed width classes, transition-colors duration-150)
       for (let i = 1; i <= 4; i++) {
         const btn = document.getElementById(`tab-btn-${i}`);
+        const timeSpan = document.getElementById(`tab-time-${i}`);
         if (i === id) {
-          btn.className = 'session-tab px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider transition-all flex items-center gap-2 bg-volt text-black shadow-[0_0_16px_rgba(213,255,0,0.4)]';
+          btn.className = 'session-tab flex-shrink-0 whitespace-nowrap px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider transition-colors duration-150 flex items-center gap-2 bg-volt text-black shadow-[0_0_16px_rgba(213,255,0,0.4)]';
+          if (timeSpan) timeSpan.classList.replace('opacity-60', 'opacity-90');
         } else {
-          btn.className = 'session-tab px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider text-white/70 hover:text-white hover:bg-white/5 transition-all flex items-center gap-2';
+          btn.className = 'session-tab flex-shrink-0 whitespace-nowrap px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider text-white/70 hover:text-white hover:bg-white/5 transition-colors duration-150 flex items-center gap-2';
+          if (timeSpan) timeSpan.classList.replace('opacity-90', 'opacity-60');
         }
       }
 
