@@ -124,7 +124,7 @@
           <div id="clockCircleDial" class="relative flex items-center justify-center w-[min(88vw,480px)] h-[min(88vw,480px)] sm:w-[500px] sm:h-[500px] my-1">
             
             <!-- SVG PROGRESS DIAL & RUNNER BEAD -->
-            <svg class="absolute inset-0 w-full h-full -rotate-90 pointer-events-none drop-shadow-[0_0_24px_rgba(213,255,0,0.35)]" viewBox="0 0 500 500">
+            <svg class="absolute inset-0 w-full h-full pointer-events-none drop-shadow-[0_0_24px_rgba(213,255,0,0.35)]" viewBox="0 0 500 500">
               <defs>
                 <linearGradient id="neonVoltGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stop-color="#D5FF00"/>
@@ -147,7 +147,7 @@
               <circle cx="250" cy="250" r="214" fill="none" stroke="#232936" stroke-width="2" stroke-dasharray="3 9" opacity="0.45" />
 
               <!-- Animated Main Neon Ring -->
-              <circle id="svgProgressRing" cx="250" cy="250" r="225" fill="none" stroke="url(#neonVoltGrad)" stroke-width="14" stroke-linecap="round" stroke-dasharray="1413.7" stroke-dashoffset="0" />
+              <circle id="svgProgressRing" transform="rotate(-90 250 250)" cx="250" cy="250" r="225" fill="none" stroke="url(#neonVoltGrad)" stroke-width="14" stroke-linecap="round" stroke-dasharray="1413.7" stroke-dashoffset="0" />
 
               <!-- Trigonometric Runner Head Bead -->
               <g id="svgRunnerHeadGroup" opacity="1">
@@ -169,7 +169,7 @@
                   <span id="dialStatusDot" class="w-2 h-2 rounded-full bg-white/40"></span>
                   <span id="dialStatusLabel" class="text-[11px] font-black uppercase tracking-wider text-white/80 font-mono">STANDBY</span>
                 </div>
-                <h2 id="dialChallengeName" class="text-xs sm:text-sm font-black uppercase tracking-[0.25em] text-white/90 truncate max-w-[220px]">
+                <h2 id="dialChallengeName" class="text-xs sm:text-sm font-black uppercase tracking-[0.18em] text-white/95 text-center leading-snug w-full max-w-[340px] px-2 whitespace-normal">
                   CHALLENGE 1: LINE PASS
                 </h2>
               </div>
