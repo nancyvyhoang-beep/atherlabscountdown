@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full bg-[#050709]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ather Labs Stage Countdown & Precision Timer — Ambition, Amplified 2026</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            volt: '#D5FF00',
+            'volt-dark': '#ADC700',
+            atherBg: '#050709',
+            atherCard: '#0D0F12',
+            atherDanger: '#FF334B'
+          },
+          fontFamily: {
+            ather: ['"FF Good Pro"', '"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"FF Good Pro Ultra"', '"FF Good Pro Wide"', '"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"Space Grotesk"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts Fallbacks -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;700;900&display=swap" rel="stylesheet">
+
+  <!-- Ather Labs Design System Stylesheet -->
+  <link rel="stylesheet" href="stylesheet.css">
+
+  <style>
+    .tabular-timer {
+      font-variant-numeric: tabular-nums lining-nums;
+      font-feature-settings: "tnum" 1;
+    }
+    .grid-cell-4x4 {
+      aspect-ratio: 1 / 1;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  </style>
+</head>
+
+<body class="h-full w-full bg-[#050709] bg-ather-contour text-white select-none overflow-x-hidden font-ather flex flex-col justify-between relative">
+
+  <!-- CANVAS CONFETTI & SPARKS -->
+  <canvas id="fxCanvas" class="fixed inset-0 pointer-events-none z-50 w-full h-full"></canvas>
+
+  <!-- TOP BAR: SESSION SWITCHER & STAGE HUD -->
+  <header id="stageTopBar" class="w-full px-4 sm:px-8 pt-4 pb-2 flex flex-wrap items-center justify-between gap-4 z-30 transition-opacity duration-300">
+    <!-- 4 Challenge Session Tabs -->
+    <nav class="flex items-center gap-1.5 sm:gap-2.5 p-1.5 bg-[#0D0F12]/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-x-auto max-w-full">
+      <button onclick="switchChallenge(1)" id="tab-btn-1" class="session-tab px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider transition-all flex items-center gap-2 bg-volt text-black shadow-[0_0_16px_rgba(213,255,0,0.4)]">
+        <span class="w-5 h-5 rounded-md bg-black/15 flex items-center justify-center text-[10px]">1</span>
+        <span>LINE PASS</span>
+        <span id="tab-time-1" class="text-[11px] opacity-80 font-mono font-bold ml-0.5">03:00</span>
+      </button>
+
+      <button onclick="switchChallenge(2)" id="tab-btn-2" class="session-tab px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider text-white/70 hover:text-white hover:bg-white/5 transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-md bg-white/10 flex items-center justify-center text-[10px]">2</span>
+        <span>CUP TOWER</span>
+        <span id="tab-time-2" class="text-[11px] opacity-60 font-mono font-bold ml-0.5">03:00</span>
+      </button>
+
+      <button onclick="switchChallenge(3)" id="tab-btn-3" class="session-tab px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider text-white/70 hover:text-white hover:bg-white/5 transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-md bg-white/10 flex items-center justify-center text-[10px]">3</span>
+        <span>MAZE RELAY</span>
+        <span class="px-1.5 py-0.5 rounded text-[9px] font-black bg-volt/20 text-volt border border-volt/40">BẢN ĐỒ</span>
+        <span id="tab-time-3" class="text-[11px] opacity-60 font-mono font-bold ml-0.5">03:00</span>
+      </button>
+
+      <button onclick="switchChallenge(4)" id="tab-btn-4" class="session-tab px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider text-white/70 hover:text-white hover:bg-white/5 transition-all flex items-center gap-2">
+        <span class="w-5 h-5 rounded-md bg-white/10 flex items-center justify-center text-[10px]">4</span>
+        <span>BALL LINE RUSH</span>
+        <span id="tab-time-4" class="text-[11px] opacity-60 font-mono font-bold ml-0.5">03:00</span>
+      </button>
+    </nav>
+
+    <!-- Top Right Actions -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Briefing Video Modal Button -->
+      <button onclick="openVideoModal()" class="px-3.5 py-2 rounded-xl bg-[#0D0F12]/80 hover:bg-[#161A20] text-volt hover:text-white border border-volt/30 hover:border-volt transition-all flex items-center gap-2 text-xs font-bold shadow-[0_0_12px_rgba(213,255,0,0.2)]">
+        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <span class="hidden sm:inline">VIDEO MÔ PHỎNG</span>
+        <span class="text-[10px] opacity-75 bg-volt/10 text-volt px-1.5 py-0.5 rounded font-mono border border-volt/20">V</span>
+      </button>
+
+      <!-- Audio Mute/Unmute -->
+      <button id="soundToggleBtn" onclick="toggleMute()" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#0D0F12]/80 hover:bg-[#161A20] text-white/80 hover:text-white border border-white/10 flex items-center justify-center transition-all" title="Bật/Tắt âm thanh">
+        <svg id="soundIconOn" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+        <svg id="soundIconOff" class="w-4 h-4 hidden text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/></svg>
+      </button>
+
+      <!-- Settings Drawer Button -->
+      <button onclick="toggleSettings()" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#0D0F12]/80 hover:bg-[#161A20] text-white/80 hover:text-white border border-white/10 flex items-center justify-center transition-all" title="Cài đặt (S)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3" stroke-width="2"/></svg>
+      </button>
+
+      <!-- Fullscreen Toggle -->
+      <button onclick="toggleFullscreen()" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#0D0F12]/80 hover:bg-[#161A20] text-volt border border-volt/30 flex items-center justify-center transition-all shadow-[0_0_12px_rgba(213,255,0,0.15)]" title="Toàn màn hình (F)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN STAGE CONTAINER -->
+  <main class="w-full flex-1 flex flex-col items-center justify-center px-4 sm:px-8 py-2 relative z-10">
+    <div id="stageLayoutContainer" class="w-full max-w-7xl mx-auto flex flex-col items-center justify-center transition-all duration-500">
+      
+      <!-- WRAPPER: CLOCK + OPTIONAL MAZE BOARD -->
+      <div id="stageColumnsGrid" class="w-full flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12 transition-all duration-500">
+        
+        <!-- LEFT / CENTER COLUMN: CIRCULAR CLOCK + DOCK + LIVE MARKS -->
+        <div id="clockMasterColumn" class="w-full flex flex-col items-center justify-center max-w-2xl transition-all duration-500">
+          
+          <!-- CIRCULAR CLOCK DIAL -->
+          <div id="clockCircleDial" class="relative flex items-center justify-center w-[min(88vw,480px)] h-[min(88vw,480px)] sm:w-[500px] sm:h-[500px] my-1">
+            
+            <!-- SVG PROGRESS DIAL & RUNNER BEAD -->
+            <svg class="absolute inset-0 w-full h-full -rotate-90 pointer-events-none drop-shadow-[0_0_24px_rgba(213,255,0,0.35)]" viewBox="0 0 500 500">
+              <defs>
+                <linearGradient id="neonVoltGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#D5FF00"/>
+                  <stop offset="100%" stop-color="#9BC000"/>
+                </linearGradient>
+                <linearGradient id="neonDangerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#FF3B30"/>
+                  <stop offset="100%" stop-color="#FF0055"/>
+                </linearGradient>
+                <filter id="glowFilt" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="8" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+
+              <!-- Track Circle -->
+              <circle cx="250" cy="250" r="225" fill="none" stroke="#161A22" stroke-width="12" stroke-linecap="round" opacity="0.75" />
+              
+              <!-- Subtle Inner Gauge Marks -->
+              <circle cx="250" cy="250" r="214" fill="none" stroke="#232936" stroke-width="2" stroke-dasharray="3 9" opacity="0.45" />
+
+              <!-- Animated Main Neon Ring -->
+              <circle id="svgProgressRing" cx="250" cy="250" r="225" fill="none" stroke="url(#neonVoltGrad)" stroke-width="14" stroke-linecap="round" stroke-dasharray="1413.7" stroke-dashoffset="0" />
+
+              <!-- Trigonometric Runner Head Bead -->
+              <g id="svgRunnerHeadGroup" opacity="1">
+                <circle id="runnerOuterGlow" cx="250" cy="25" r="16" fill="#D5FF00" opacity="0.35" filter="url(#glowFilt)" />
+                <circle id="runnerDisk" cx="250" cy="25" r="9" fill="#D5FF00" stroke="#050709" stroke-width="2.5" />
+                <circle id="runnerCenterDot" cx="250" cy="25" r="3.5" fill="#FFFFFF" />
+              </g>
+
+              <!-- Circumference Markers Group -->
+              <g id="circumferenceMarkersLayer"></g>
+            </svg>
+
+            <!-- ENCAPSULATED SAFE ZONE -->
+            <div class="relative w-[76%] h-[76%] rounded-full flex flex-col items-center justify-between text-center py-6 px-4 z-10 pointer-events-auto">
+              
+              <!-- TOP INSIDE CIRCLE: STATUS PILL & CHALLENGE TITLE -->
+              <div class="flex flex-col items-center gap-1.5 pt-1">
+                <div id="dialStatusPill" class="px-3.5 py-1 rounded-full bg-[#12161D]/90 border border-white/10 backdrop-blur-md flex items-center gap-2 shadow-lg">
+                  <span id="dialStatusDot" class="w-2 h-2 rounded-full bg-white/40"></span>
+                  <span id="dialStatusLabel" class="text-[11px] font-black uppercase tracking-wider text-white/80 font-mono">STANDBY</span>
+                </div>
+                <h2 id="dialChallengeName" class="text-xs sm:text-sm font-black uppercase tracking-[0.25em] text-white/90 truncate max-w-[220px]">
+                  CHALLENGE 1: LINE PASS
+                </h2>
+              </div>
+
+              <!-- CENTER INSIDE CIRCLE: GIANT MONOSPACED DIGITS -->
+              <div class="flex flex-col items-center justify-center my-auto">
+                <div id="dialTimerDigits" class="text-6xl sm:text-7xl md:text-8xl font-black font-display text-volt tracking-tight text-glow-volt tabular-timer transition-colors">
+                  03:00
+                </div>
+                <!-- Milliseconds display -->
+                <div id="dialMillisBlock" class="flex items-center gap-1 text-sm sm:text-base font-mono font-bold text-volt/80 mt-0.5">
+                  <span class="text-white/40">.</span><span id="dialMillisDigits">00</span><span class="text-xs text-white/40 font-normal">s</span>
+                </div>
+              </div>
+
+              <!-- BOTTOM INSIDE CIRCLE: CLEAN PERCENTAGE PILL -->
+              <div class="flex flex-col items-center pb-1">
+                <div id="dialRemainingPercentPill" class="px-3 py-1 rounded-full bg-[#0D0F12]/85 border border-white/10 text-[10px] sm:text-[11px] font-mono font-bold tracking-widest text-white/80 shadow-md">
+                  CÒN LẠI: <span id="dialRemainingPercentVal" class="text-volt font-black">100%</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- PRIMARY STAGE CONTROL DOCK -->
+          <div id="stageControlDock" class="flex items-center gap-2 sm:gap-3 mt-4 mb-4 z-20">
+            <!-- Start / Pause Button -->
+            <button id="btnPrimaryPlay" onclick="toggleTimer()" class="px-6 sm:px-8 py-3 rounded-2xl bg-volt hover:bg-volt-dark text-black font-display font-black text-sm sm:text-base tracking-wider transition-all duration-150 transform hover:scale-105 active:scale-95 flex items-center gap-2.5 shadow-[0_0_24px_rgba(213,255,0,0.5)]">
+              <svg id="iconPlay" class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              <svg id="iconPause" class="w-5 h-5 fill-current hidden" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+              <span id="labelPlay">BẮT ĐẦU</span>
+            </button>
+
+            <!-- Mark Lap Button -->
+            <button onclick="recordTimeMark()" class="px-4 sm:px-5 py-3 rounded-2xl bg-[#0D0F12]/90 hover:bg-[#161B22] text-volt hover:text-white border border-volt/40 hover:border-volt font-bold text-sm tracking-wide transition-all duration-150 transform active:scale-95 flex items-center gap-2 shadow-[0_0_16px_rgba(213,255,0,0.2)]" title="Ghi lại mốc thời gian (Phím M hoặc L)">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+              <span>GHI MỐC</span>
+            </button>
+
+            <!-- Reset Button -->
+            <button onclick="resetCurrentTimer()" class="px-4 py-3 rounded-2xl bg-[#0D0F12]/90 hover:bg-[#161B22] text-white/80 hover:text-white border border-white/10 hover:border-white/30 font-bold text-sm tracking-wide transition-all duration-150 transform active:scale-95 flex items-center gap-1.5" title="Làm mới lại thử thách (R)">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <span>LÀM MỚI</span>
+            </button>
+
+            <!-- Quick Add +30s / +1m -->
+            <div class="hidden sm:flex items-center gap-1.5 pl-1">
+              <button onclick="addSeconds(30)" class="px-2.5 py-3 rounded-2xl bg-[#0D0F12]/80 hover:bg-white/10 text-white/70 hover:text-volt border border-white/10 text-xs font-mono font-bold transition-all">+30s</button>
+              <button onclick="addSeconds(60)" class="px-2.5 py-3 rounded-2xl bg-[#0D0F12]/80 hover:bg-white/10 text-white/70 hover:text-volt border border-white/10 text-xs font-mono font-bold transition-all">+1m</button>
+            </div>
+          </div>
+
+          <!-- TIME MARKS LOG SECTION (DIRECTLY UNDER THE CLOCK) -->
+          <section id="marksDisplaySection" class="w-full glass-ather p-4 sm:p-5 mt-2 transition-all duration-300">
+            <!-- Marks Header -->
+            <div class="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
+              <div class="flex items-center gap-2">
+                <span class="text-volt">📌</span>
+                <h3 class="text-xs sm:text-sm font-black uppercase tracking-wider text-white">MỐC THỜI GIAN</h3>
+                <span id="marksChallengeBadge" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-volt/10 text-volt border border-volt/30">CHALLENGE 1</span>
+                <span id="marksTotalCount" class="text-[10px] font-mono text-white/50">(0 mốc)</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="copyAllMarksToClipboard()" class="px-3 py-1 rounded-lg bg-white/5 hover:bg-white/15 text-white/80 hover:text-white text-xs font-bold transition-all flex items-center gap-1 border border-white/10">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                  <span>SAO CHÉP</span>
+                </button>
+                <button onclick="clearAllMarks()" class="px-2.5 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-bold transition-all border border-red-500/20">
+                  XÓA TẤT CẢ
+                </button>
+              </div>
+            </div>
+
+            <!-- Marks Scrollable List -->
+            <div id="marksListContainer" class="max-h-56 sm:max-h-64 overflow-y-auto space-y-2 pr-1">
+              <!-- Empty State -->
+              <div id="marksEmptyPlaceholder" class="text-center py-6 text-white/40 text-xs font-mono">
+                <span class="block text-xl mb-1">⏱️</span>
+                Chưa ghi nhận mốc nào cho thử thách này.<br>
+                Bấm nút <span class="text-volt font-bold">"GHI MỐC"</span> hoặc phím <span class="text-volt font-bold">[M / L]</span> khi đồng hồ đang chạy để ghi nhận thời gian.
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- RIGHT COLUMN: INTERACTIVE 4x4 MAZE RELAY BOARD (SPLIT SCREEN FOR CHALLENGE 3) -->
+        <div id="mazeBoardColumn" class="hidden w-full lg:w-[460px] flex-col items-center justify-center transition-all duration-500">
+          <div class="w-full glass-ather-volt p-5 sm:p-6 rounded-3xl border border-volt/30 shadow-[0_0_30px_rgba(213,255,0,0.15)] flex flex-col items-center">
+            
+            <!-- Maze Title & Header -->
+            <div class="w-full flex items-center justify-between mb-4 pb-2 border-b border-white/10">
+              <div class="flex items-center gap-2">
+                <div class="w-2.5 h-2.5 rounded-full bg-volt animate-ping"></div>
+                <h3 class="text-xs sm:text-sm font-black uppercase tracking-wider text-white">SƠ ĐỒ BƯỚC ĐI MÊ CUNG 4x4</h3>
+              </div>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-volt/10 text-volt border border-volt/30">MAZE RELAY</span>
+            </div>
+
+            <!-- The 4x4 Grid Board matching user image: White tiles with solid black borders -->
+            <div class="w-full max-w-[360px] aspect-[4/4] bg-black p-1 rounded-xl shadow-2xl border-4 border-black">
+              <div id="mazeGridCells" class="w-full h-full grid grid-cols-4 grid-rows-4 gap-[2px] bg-black">
+                <!-- 16 Cells will be rendered by JS -->
+              </div>
+            </div>
+
+            <!-- Maze Board Controls -->
+            <div class="w-full flex items-center justify-between mt-4 pt-3 border-t border-white/10 text-xs">
+              <div class="flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded-full bg-[#D5FF00] border border-black shadow-[0_0_8px_#D5FF00]"></span>
+                <span class="text-white/80 font-mono text-[11px]">Vị trí bóng hiện tại</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="resetMazeBall()" class="px-2.5 py-1 rounded bg-white/5 hover:bg-white/15 text-white/70 hover:text-white border border-white/10 text-[11px] font-bold transition-all">
+                  Về vị trí đầu (R1, C2)
+                </button>
+                <button onclick="clearMazeSteps()" class="px-2.5 py-1 rounded bg-white/5 hover:bg-white/15 text-white/70 hover:text-white border border-white/10 text-[11px] font-bold transition-all">
+                  Xóa vết bước
+                </button>
+              </div>
+            </div>
+            
+            <p class="text-[10px] text-white/40 mt-2 text-center">
+              💡 Bấm vào ô bất kỳ trên lưới để di chuyển bóng hoặc đánh dấu chuỗi bước đi của đội thi đấu.
+            </p>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- STAGE FOOTER KEYBOARD HINTS (AUTO-HIDE ON INACTIVITY) -->
+  <footer id="stageShortcutsFooter" class="w-full py-2.5 text-center text-[11px] font-mono text-white/40 z-20 pointer-events-none transition-opacity duration-300">
+    Phím tắt: <strong class="text-white/60">1-4</strong> (Chọn Challenge) • <strong class="text-white/60">Space</strong> (Chạy/Dừng) • <strong class="text-white/60">M / L</strong> (Ghi mốc) • <strong class="text-white/60">V</strong> (Video Mô Phỏng) • <strong class="text-white/60">R</strong> (Làm mới) • <strong class="text-white/60">F</strong> (Toàn màn hình)
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: VIDEO MÔ PHỎNG (CÁCH 1: OFFLINE LOCAL MP4 & SELECT FILE BACKUP) -->
+  <!-- ========================================================================= -->
+  <div id="videoBriefingModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-2xl hidden items-center justify-center p-4 sm:p-6 transition-all duration-300">
+    <div class="relative w-full max-w-4xl glass-ather border border-volt/40 rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(213,255,0,0.25)] flex flex-col max-h-[92vh]">
+      
+      <!-- Modal Top Bar -->
+      <div class="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-[#080A0D]/90">
+        <div class="flex items-center gap-3">
+          <div class="w-3 h-3 rounded-full bg-volt animate-pulse"></div>
+          <div>
+            <span class="text-[10px] font-mono uppercase text-volt tracking-widest block">MÔ PHỎNG LUẬT THI ĐẤU</span>
+            <h3 id="videoModalTitle" class="text-base sm:text-lg font-black text-white uppercase tracking-wider">CHALLENGE 1: LINE PASS</h3>
+          </div>
+        </div>
+        <button onclick="closeVideoModal()" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white flex items-center justify-center transition-all border border-white/10">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Video Player Container (Local HTML5 Video) -->
+      <div class="w-full flex-1 bg-black flex flex-col items-center justify-center relative min-h-[300px] sm:min-h-[420px] overflow-hidden">
+        
+        <!-- Native Video Element -->
+        <video id="briefingLocalVideo" class="w-full h-full max-h-[58vh] object-contain bg-black" controls autoplay playsinline preload="auto">
+          <source id="briefingVideoSource" src="./videos/game1.mp4" type="video/mp4">
+          Trình duyệt của bạn không hỗ trợ phát thẻ video HTML5.
+        </video>
+
+        <!-- Fallback Alert if Video File Missing -->
+        <div id="videoErrorOverlay" class="absolute inset-0 bg-[#0D0F12]/95 backdrop-blur-md hidden flex-col items-center justify-center p-6 text-center z-10">
+          <span class="text-4xl mb-3">📁</span>
+          <h4 class="text-base font-bold text-white mb-1">Chưa tìm thấy file video cục bộ</h4>
+          <p id="videoErrorPathText" class="text-xs text-white/60 font-mono mb-4 max-w-md">
+            Đường dẫn dự kiến: <code class="text-volt">./videos/game1.mp4</code>
+          </p>
+          <div class="flex flex-wrap items-center justify-center gap-3">
+            <label class="px-4 py-2.5 rounded-xl bg-volt text-black text-xs font-black uppercase tracking-wider cursor-pointer hover:bg-volt-dark transition-all flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+              <span>Chọn file MP4 từ máy tính</span>
+              <input type="file" id="manualFilePicker" accept="video/mp4,video/*" class="hidden" onchange="handleManualLocalVideo(event)">
+            </label>
+            <button onclick="retryCurrentVideo()" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all">
+              Thử tải lại
+            </button>
+          </div>
+          <p class="text-[11px] text-white/40 mt-4 max-w-sm">
+            💡 Lưu ý: Hãy tạo thư mục <code>videos</code> ngang hàng với file <code>index.html</code> và đặt các file tên là <code>game1.mp4</code>, <code>game2.mp4</code>, <code>game3.mp4</code>, <code>game4.mp4</code>.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Modal Bottom Actions -->
+      <div class="px-6 py-4 border-t border-white/10 bg-[#080A0D]/95 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <span id="videoStatusPill" class="text-[11px] font-mono text-volt bg-volt/10 border border-volt/30 px-2.5 py-1 rounded-lg">
+            Đang phát: ./videos/game1.mp4
+          </span>
+          <label class="text-[11px] text-white/50 hover:text-white cursor-pointer underline flex items-center gap-1 pl-2">
+            <span>Đổi video khác...</span>
+            <input type="file" accept="video/mp4,video/*" class="hidden" onchange="handleManualLocalVideo(event)">
+          </label>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button onclick="closeVideoModal()" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white text-xs font-bold transition-all">
+            Đóng
+          </button>
+          
+          <!-- GET READY CLIMAX TRIGGER -->
+          <button onclick="launchGetReadyCountdown()" class="px-6 py-2.5 rounded-xl bg-volt hover:bg-volt-dark text-black text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(213,255,0,0.5)] transform hover:scale-105 active:scale-95">
+            <span>🚀 VÀO TRẬN (ĐẾM 3-2-1)</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- OVERLAY: GET READY 3 - 2 - 1 CLIMAX COUNTDOWN -->
+  <!-- ========================================================================= -->
+  <div id="getReadyOverlay" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-3xl hidden flex-col items-center justify-center transition-all select-none">
+    <div class="text-center flex flex-col items-center">
+      <div class="text-xs sm:text-sm font-mono tracking-[0.3em] uppercase text-volt mb-3 animate-pulse">
+        CHUẨN BỊ BẮT ĐẦU
+      </div>
+      <div id="getReadyNumber" class="text-8xl sm:text-9xl md:text-[14rem] font-black font-display text-volt text-glow-volt transform scale-100 transition-all duration-300">
+        3
+      </div>
+      <div id="getReadySubtext" class="text-base sm:text-xl font-bold uppercase tracking-widest text-white/80 mt-4">
+        SẴN SÀNG...
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- DRAWER: SETTINGS (PHÍM TẮT S) -->
+  <!-- ========================================================================= -->
+  <div id="settingsDrawerBackdrop" onclick="toggleSettings()" class="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm hidden transition-opacity duration-300"></div>
+  <aside id="settingsDrawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-[#0D0F12] border-l border-white/10 z-50 p-6 flex flex-col justify-between transform translate-x-full transition-transform duration-300 shadow-2xl">
+    <div>
+      <div class="flex items-center justify-between pb-4 border-b border-white/10">
+        <h3 class="text-base font-black uppercase tracking-wider text-white flex items-center gap-2">
+          <span>⚙️</span> CÀI ĐẶT THỜI GIAN
+        </h3>
+        <button onclick="toggleSettings()" class="text-white/60 hover:text-white p-1">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="space-y-5 mt-6">
+        <!-- Duration Settings per Challenge -->
+        <div>
+          <label class="text-xs font-bold uppercase text-white/60 tracking-wider block mb-2">Thời gian Challenge hiện tại (Phút)</label>
+          <div class="flex items-center gap-3">
+            <button onclick="adjustCurrentMinutes(-1)" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 text-white font-bold text-lg">-</button>
+            <div id="settingsDurationDisplay" class="flex-1 text-center py-2 rounded-xl bg-black border border-white/10 font-mono text-xl font-bold text-volt">03:00</div>
+            <button onclick="adjustCurrentMinutes(1)" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 text-white font-bold text-lg">+</button>
+          </div>
+          <div class="grid grid-cols-4 gap-2 mt-3">
+            <button onclick="setCurrentDuration(60)" class="py-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-xs font-mono font-bold text-white/80">1m</button>
+            <button onclick="setCurrentDuration(120)" class="py-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-xs font-mono font-bold text-white/80">2m</button>
+            <button onclick="setCurrentDuration(180)" class="py-1.5 rounded-lg bg-volt/20 hover:bg-volt/30 text-xs font-mono font-bold text-volt border border-volt/30">3m</button>
+            <button onclick="setCurrentDuration(300)" class="py-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-xs font-mono font-bold text-white/80">5m</button>
+          </div>
+        </div>
+
+        <!-- Audio Synthesizer Toggle -->
+        <div class="pt-4 border-t border-white/10 flex items-center justify-between">
+          <div>
+            <span class="text-sm font-bold text-white block">Âm thanh đếm & Fanfare</span>
+            <span class="text-xs text-white/50">Tiếng tick cyber, cảnh báo 10s & âm pháo hoa</span>
+          </div>
+          <button id="settingsAudioBtn" onclick="toggleMute()" class="px-3 py-1.5 rounded-xl bg-volt text-black text-xs font-black uppercase">BẬT</button>
+        </div>
+
+        <!-- Milliseconds Toggle -->
+        <div class="pt-4 border-t border-white/10 flex items-center justify-between">
+          <div>
+            <span class="text-sm font-bold text-white block">Hiển thị Mili-giây (.MS)</span>
+            <span class="text-xs text-white/50">Quét chính xác đến phần trăm giây</span>
+          </div>
+          <button id="settingsMillisBtn" onclick="toggleMillisDisplay()" class="px-3 py-1.5 rounded-xl bg-volt text-black text-xs font-black uppercase">BẬT</button>
+        </div>
+
+        <!-- Reset All Data -->
+        <div class="pt-4 border-t border-white/10">
+          <button onclick="resetAllChallengesData()" class="w-full py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 text-xs font-bold transition-all">
+            Làm mới toàn bộ dữ liệu 4 Challenge
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-4 border-t border-white/10 text-center text-xs font-mono text-white/40">
+      Ather Labs • Ambition, Amplified 2026
+    </div>
+  </aside>
+
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT ENGINE: TIMER, AUDIO, WEBCANVAS FX, MARKS & LOCAL VIDEO -->
+  <!-- ========================================================================= -->
+  <script>
+    // --- 1. APPLICATION STATE ---
+    const challengesData = {
+      1: { id: 1, title: 'CHALLENGE 1: LINE PASS', totalSec: 180, remainingMs: 180000, isRunning: false, marks: [], videoSrc: './videos/game1.mp4' },
+      2: { id: 2, title: 'CHALLENGE 2: CUP TOWER', totalSec: 180, remainingMs: 180000, isRunning: false, marks: [], videoSrc: './videos/game2.mp4' },
+      3: { id: 3, title: 'CHALLENGE 3: MAZE RELAY', totalSec: 180, remainingMs: 180000, isRunning: false, marks: [], videoSrc: './videos/game3.mp4' },
+      4: { id: 4, title: 'CHALLENGE 4: BALL LINE RUSH', totalSec: 180, remainingMs: 180000, isRunning: false, marks: [], videoSrc: './videos/game4.mp4' }
+    };
+
+    let activeChallengeId = 1;
+    let isSoundMuted = false;
+    let showMilliseconds = true;
+    let lastTimestamp = 0;
+    let animFrameId = null;
+
+    // Maze Grid State (4x4)
+    // Default position: Row 0, Column 1 (0-indexed) matching the uploaded image
+    let mazeBallPos = { row: 0, col: 1 };
+    let mazeHistory = [{ row: 0, col: 1, step: 1 }];
+
+    // Audio Context (Web Audio API)
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    // --- 2. PROCEDURAL SOUND SYNTHESIS ---
+    function playTickSound() {
+      if (isSoundMuted) return;
+      try {
+        const ctx = getAudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1200, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.04);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.04);
+      } catch (e) {}
+    }
+
+    function playUrgentBeep(freq = 880) {
+      if (isSoundMuted) return;
+      try {
+        const ctx = getAudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.08);
+      } catch (e) {}
+    }
+
+    function playMarkChime() {
+      if (isSoundMuted) return;
+      try {
+        const ctx = getAudioContext();
+        [987.77, 1318.51].forEach((f, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(f, ctx.currentTime + (i * 0.06));
+          gain.gain.setValueAtTime(0.12, ctx.currentTime + (i * 0.06));
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (i * 0.06) + 0.18);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + (i * 0.06));
+          osc.stop(ctx.currentTime + (i * 0.06) + 0.18);
+        });
+      } catch (e) {}
+    }
+
+    function playClimaxBoom() {
+      if (isSoundMuted) return;
+      try {
+        const ctx = getAudioContext();
+        // 808 Sub-bass Boom
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(150, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(28, ctx.currentTime + 1.2);
+        gain.gain.setValueAtTime(0.4, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 1.5);
+
+        // Fanfare Chord
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq) => {
+          const fOsc = ctx.createOscillator();
+          const fGain = ctx.createGain();
+          fOsc.type = 'sine';
+          fOsc.frequency.setValueAtTime(freq, ctx.currentTime);
+          fGain.gain.setValueAtTime(0.1, ctx.currentTime);
+          fGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.8);
+          fOsc.connect(fGain);
+          fGain.connect(ctx.destination);
+          fOsc.start();
+          fOsc.stop(ctx.currentTime + 1.8);
+        });
+      } catch (e) {}
+    }
+
+    // --- 3. HIGH-PRECISION CONTINUOUS RAF LOOP (ZERO JITTER) ---
+    function startTimerLoop() {
+      if (!animFrameId) {
+        lastTimestamp = performance.now();
+        animFrameId = requestAnimationFrame(renderLoop);
+      }
+    }
+
+    function renderLoop(currentTime) {
+      const delta = currentTime - lastTimestamp;
+      lastTimestamp = currentTime;
+
+      const current = challengesData[activeChallengeId];
+
+      if (current.isRunning && current.remainingMs > 0) {
+        const prevSec = Math.ceil(current.remainingMs / 1000);
+        current.remainingMs = Math.max(0, current.remainingMs - delta);
+        const newSec = Math.ceil(current.remainingMs / 1000);
+
+        // Audio ticks & urgency beeps
+        if (newSec !== prevSec) {
+          if (newSec <= 5 && newSec > 0) {
+            playUrgentBeep(880 + (5 - newSec) * 120);
+          } else {
+            playTickSound();
+          }
+        }
+
+        // Completion
+        if (current.remainingMs <= 0) {
+          current.isRunning = false;
+          current.remainingMs = 0;
+          onChallengeComplete();
+        }
+      }
+
+      updateDisplay();
+
+      if (Object.values(challengesData).some(c => c.isRunning)) {
+        animFrameId = requestAnimationFrame(renderLoop);
+      } else {
+        animFrameId = null;
+      }
+    }
+
+    // --- 4. DISPLAY & SVG DIAL UPDATE ---
+    const CIRCUMFERENCE = 2 * Math.PI * 225; // 1413.716 px
+    let lastRenderedSecInt = -1;
+
+    function updateDisplay() {
+      const current = challengesData[activeChallengeId];
+      const totalMs = current.totalSec * 1000;
+      const fraction = totalMs > 0 ? (current.remainingMs / totalMs) : 0;
+
+      // 1. Digital Digits
+      const totalSec = Math.ceil(current.remainingMs / 1000);
+      const m = Math.floor(totalSec / 60);
+      const s = totalSec % 60;
+      const ms = Math.floor((current.remainingMs % 1000) / 10);
+
+      const mStr = String(m).padStart(2, '0');
+      const sStr = String(s).padStart(2, '0');
+      const msStr = String(ms).padStart(2, '0');
+
+      document.getElementById('dialTimerDigits').textContent = `${mStr}:${sStr}`;
+      document.getElementById('dialMillisDigits').textContent = msStr;
+
+      // 2. Tab Badge update
+      document.getElementById(`tab-time-${activeChallengeId}`).textContent = `${mStr}:${sStr}`;
+
+      // 3. SVG Progress Stroke (Continuous Sub-millisecond)
+      const offset = CIRCUMFERENCE * (1 - fraction);
+      const ringEl = document.getElementById('svgProgressRing');
+      ringEl.style.strokeDashoffset = offset;
+
+      // 4. Exact Trigonometric Runner Head Position
+      // Angle: 0 at top, clockwise: x = 250 + 225*sin(theta), y = 250 - 225*cos(theta)
+      const theta = fraction * 2 * Math.PI;
+      const hx = 250 + 225 * Math.sin(theta);
+      const hy = 250 - 225 * Math.cos(theta);
+
+      const runnerG = document.getElementById('svgRunnerHeadGroup');
+      const runnerGlow = document.getElementById('runnerOuterGlow');
+      const runnerDisk = document.getElementById('runnerDisk');
+
+      runnerGlow.setAttribute('cx', hx);
+      runnerGlow.setAttribute('cy', hy);
+      runnerDisk.setAttribute('cx', hx);
+      runnerDisk.setAttribute('cy', hy);
+      document.getElementById('runnerCenterDot').setAttribute('cx', hx);
+      document.getElementById('runnerCenterDot').setAttribute('cy', hy);
+
+      // Hide runner if finished
+      runnerG.style.opacity = current.remainingMs <= 0 ? '0' : '1';
+
+      // 5. Danger State (<= 10 seconds)
+      const isDanger = totalSec <= 10 && current.remainingMs > 0;
+      if (isDanger) {
+        ringEl.setAttribute('stroke', 'url(#neonDangerGrad)');
+        runnerDisk.setAttribute('fill', '#FF3B30');
+        runnerGlow.setAttribute('fill', '#FF3B30');
+        document.getElementById('dialTimerDigits').classList.remove('text-volt', 'text-glow-volt');
+        document.getElementById('dialTimerDigits').classList.add('text-red-500', 'drop-shadow-[0_0_24px_rgba(255,59,48,0.8)]');
+        document.getElementById('dialStatusDot').className = 'w-2 h-2 rounded-full bg-red-500 animate-ping';
+        document.getElementById('dialStatusLabel').textContent = 'CRITICAL ALERT';
+        document.getElementById('dialStatusLabel').className = 'text-[11px] font-black uppercase tracking-wider text-red-400 font-mono';
+      } else {
+        ringEl.setAttribute('stroke', 'url(#neonVoltGrad)');
+        runnerDisk.setAttribute('fill', '#D5FF00');
+        runnerGlow.setAttribute('fill', '#D5FF00');
+        document.getElementById('dialTimerDigits').classList.add('text-volt', 'text-glow-volt');
+        document.getElementById('dialTimerDigits').classList.remove('text-red-500', 'drop-shadow-[0_0_24px_rgba(255,59,48,0.8)]');
+
+        if (current.isRunning) {
+          document.getElementById('dialStatusDot').className = 'w-2 h-2 rounded-full bg-volt animate-ping';
+          document.getElementById('dialStatusLabel').textContent = 'TRANSMITTING';
+          document.getElementById('dialStatusLabel').className = 'text-[11px] font-black uppercase tracking-wider text-volt font-mono';
+        } else if (current.remainingMs === totalMs) {
+          document.getElementById('dialStatusDot').className = 'w-2 h-2 rounded-full bg-white/40';
+          document.getElementById('dialStatusLabel').textContent = 'STANDBY';
+          document.getElementById('dialStatusLabel').className = 'text-[11px] font-black uppercase tracking-wider text-white/80 font-mono';
+        } else {
+          document.getElementById('dialStatusDot').className = 'w-2 h-2 rounded-full bg-amber-400';
+          document.getElementById('dialStatusLabel').textContent = 'PAUSED';
+          document.getElementById('dialStatusLabel').className = 'text-[11px] font-black uppercase tracking-wider text-amber-400 font-mono';
+        }
+      }
+
+      // 6. Percentage Pill
+      const percentVal = Math.round(fraction * 100);
+      document.getElementById('dialRemainingPercentVal').textContent = `${percentVal}%`;
+
+      // 7. Play / Pause Button States
+      if (current.isRunning) {
+        document.getElementById('iconPlay').classList.add('hidden');
+        document.getElementById('iconPause').classList.remove('hidden');
+        document.getElementById('labelPlay').textContent = 'TẠM DỪNG';
+        document.getElementById('btnPrimaryPlay').classList.replace('bg-volt', 'bg-amber-400');
+      } else {
+        document.getElementById('iconPlay').classList.remove('hidden');
+        document.getElementById('iconPause').classList.add('hidden');
+        document.getElementById('labelPlay').textContent = current.remainingMs === totalMs ? 'BẮT ĐẦU' : 'TIẾP TỤC';
+        document.getElementById('btnPrimaryPlay').classList.replace('bg-amber-400', 'bg-volt');
+      }
+    }
+
+    // --- 5. TIMER CONTROLS ---
+    function toggleTimer() {
+      const current = challengesData[activeChallengeId];
+      if (current.remainingMs <= 0) {
+        current.remainingMs = current.totalSec * 1000;
+      }
+      current.isRunning = !current.isRunning;
+      if (current.isRunning) {
+        getAudioContext();
+        startTimerLoop();
+      }
+      updateDisplay();
+    }
+
+    function resetCurrentTimer() {
+      const current = challengesData[activeChallengeId];
+      current.isRunning = false;
+      current.remainingMs = current.totalSec * 1000;
+      updateDisplay();
+    }
+
+    function addSeconds(sec) {
+      const current = challengesData[activeChallengeId];
+      current.totalSec += sec;
+      current.remainingMs += (sec * 1000);
+      updateDisplay();
+    }
+
+    function onChallengeComplete() {
+      playClimaxBoom();
+      triggerConfettiFireworks();
+      updateDisplay();
+    }
+
+    // --- 6. SWITCH CHALLENGE & SPLIT SCREEN ---
+    function switchChallenge(id) {
+      activeChallengeId = id;
+
+      // Update Top Tabs
+      for (let i = 1; i <= 4; i++) {
+        const btn = document.getElementById(`tab-btn-${i}`);
+        if (i === id) {
+          btn.className = 'session-tab px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider transition-all flex items-center gap-2 bg-volt text-black shadow-[0_0_16px_rgba(213,255,0,0.4)]';
+        } else {
+          btn.className = 'session-tab px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider text-white/70 hover:text-white hover:bg-white/5 transition-all flex items-center gap-2';
+        }
+      }
+
+      // Update Dial Challenge Title
+      document.getElementById('dialChallengeName').textContent = challengesData[id].title;
+      document.getElementById('marksChallengeBadge').textContent = `CHALLENGE ${id}`;
+
+      // Split Screen Toggle for Challenge 3 (Maze Relay)
+      const mazeCol = document.getElementById('mazeBoardColumn');
+      const clockCol = document.getElementById('clockMasterColumn');
+      if (id === 3) {
+        mazeCol.classList.remove('hidden');
+        mazeCol.classList.add('flex');
+        renderMazeGrid();
+      } else {
+        mazeCol.classList.add('hidden');
+        mazeCol.classList.remove('flex');
+      }
+
+      // Render Marks
+      renderMarksList();
+      renderCircumferenceMarkers();
+
+      // Update Settings display
+      const m = Math.floor(challengesData[id].totalSec / 60);
+      const s = challengesData[id].totalSec % 60;
+      document.getElementById('settingsDurationDisplay').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+
+      updateDisplay();
+    }
+
+    // --- 7. TIME MARKS (UNDER CLOCK) ---
+    function recordTimeMark() {
+      const current = challengesData[activeChallengeId];
+      const remainingSec = Math.ceil(current.remainingMs / 1000);
+      const elapsedSec = Math.max(0, current.totalSec - remainingSec);
+
+      const remM = Math.floor(remainingSec / 60);
+      const remS = remainingSec % 60;
+      const elM = Math.floor(elapsedSec / 60);
+      const elS = elapsedSec % 60;
+
+      const now = new Date();
+      const timeStr = now.toTimeString().split(' ')[0];
+
+      const newMark = {
+        id: Date.now(),
+        index: current.marks.length + 1,
+        remainingFormatted: `${String(remM).padStart(2, '0')}:${String(remS).padStart(2, '0')}`,
+        elapsedFormatted: `+${String(elM).padStart(2, '0')}:${String(elS).padStart(2, '0')}`,
+        timestamp: timeStr,
+        note: `Mốc #${current.marks.length + 1}`
+      };
+
+      current.marks.push(newMark);
+      playMarkChime();
+      renderMarksList();
+      renderCircumferenceMarkers();
+    }
+
+    function renderMarksList() {
+      const current = challengesData[activeChallengeId];
+      const container = document.getElementById('marksListContainer');
+      const countEl = document.getElementById('marksTotalCount');
+      countEl.textContent = `(${current.marks.length} mốc)`;
+
+      if (current.marks.length === 0) {
+        container.innerHTML = `
+          <div id="marksEmptyPlaceholder" class="text-center py-6 text-white/40 text-xs font-mono">
+            <span class="block text-xl mb-1">⏱️</span>
+            Chưa ghi nhận mốc nào cho ${current.title}.<br>
+            Bấm nút <span class="text-volt font-bold">"GHI MỐC"</span> hoặc phím <span class="text-volt font-bold">[M / L]</span> khi đồng hồ đang chạy để ghi nhận thời gian.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = '';
+      current.marks.slice().reverse().forEach((mark) => {
+        const row = document.createElement('div');
+        row.className = 'wish-item-enter flex items-center justify-between p-2.5 rounded-xl bg-[#12161D] border border-white/5 hover:border-volt/30 transition-all gap-2';
+        row.innerHTML = `
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="px-2 py-0.5 rounded-md bg-volt/20 text-volt text-xs font-mono font-black border border-volt/30">#${String(mark.index).padStart(2, '0')}</span>
+            <div class="flex flex-col">
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-mono font-bold text-white">${mark.remainingFormatted}</span>
+                <span class="text-xs font-mono text-volt/90 font-bold">(${mark.elapsedFormatted})</span>
+              </div>
+              <span class="text-[10px] text-white/40 font-mono">${mark.timestamp}</span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 flex-1 max-w-[200px] sm:max-w-xs pl-2">
+            <input type="text" value="${mark.note}" onchange="updateMarkNote(${mark.id}, this.value)" class="w-full bg-black/50 border border-white/10 focus:border-volt rounded-lg px-2 py-1 text-xs text-white placeholder-white/30 outline-none transition-all" placeholder="Ghi chú đội/lỗi...">
+            <button onclick="deleteMark(${mark.id})" class="text-white/40 hover:text-red-400 p-1 transition-all" title="Xóa mốc này">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function updateMarkNote(id, newNote) {
+      const current = challengesData[activeChallengeId];
+      const m = current.marks.find(x => x.id === id);
+      if (m) m.note = newNote;
+    }
+
+    function deleteMark(id) {
+      const current = challengesData[activeChallengeId];
+      current.marks = current.marks.filter(x => x.id !== id);
+      renderMarksList();
+      renderCircumferenceMarkers();
+    }
+
+    function clearAllMarks() {
+      const current = challengesData[activeChallengeId];
+      if (current.marks.length === 0) return;
+      if (confirm(`Bạn có chắc muốn xóa tất cả mốc của ${current.title}?`)) {
+        current.marks = [];
+        renderMarksList();
+        renderCircumferenceMarkers();
+      }
+    }
+
+    function copyAllMarksToClipboard() {
+      const current = challengesData[activeChallengeId];
+      if (current.marks.length === 0) {
+        alert('Chưa có mốc nào để sao chép!');
+        return;
+      }
+      let text = `=== BẢNG MỐC THỜI GIAN — ${current.title} ===\n`;
+      current.marks.forEach(m => {
+        text += `#${m.index} | Còn lại: ${m.remainingFormatted} | Đã trôi qua: ${m.elapsedFormatted} | Giờ: ${m.timestamp} | Ghi chú: ${m.note}\n`;
+      });
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Đã sao chép danh sách mốc vào bộ nhớ tạm!');
+      });
+    }
+
+    function renderCircumferenceMarkers() {
+      const current = challengesData[activeChallengeId];
+      const group = document.getElementById('circumferenceMarkersLayer');
+      group.innerHTML = '';
+
+      const totalMs = current.totalSec * 1000;
+      current.marks.forEach(m => {
+        // parse remaining
+        const parts = m.remainingFormatted.split(':');
+        const remSec = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+        const frac = totalMs > 0 ? (remSec * 1000 / totalMs) : 0;
+        const angle = frac * 2 * Math.PI;
+        const x = 250 + 225 * Math.sin(angle);
+        const y = 250 - 225 * Math.cos(angle);
+
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', x);
+        circle.setAttribute('cy', y);
+        circle.setAttribute('r', '4');
+        circle.setAttribute('fill', '#D5FF00');
+        circle.setAttribute('stroke', '#050709');
+        circle.setAttribute('stroke-width', '1.5');
+        circle.setAttribute('opacity', '0.9');
+        group.appendChild(circle);
+      });
+    }
+
+    // --- 8. MAZE 4x4 INTERACTIVE GRID (CHALLENGE 3) ---
+    function renderMazeGrid() {
+      const grid = document.getElementById('mazeGridCells');
+      grid.innerHTML = '';
+
+      for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 4; c++) {
+          const cell = document.createElement('div');
+          cell.className = 'grid-cell-4x4 bg-white relative flex items-center justify-center cursor-pointer hover:bg-zinc-100 transition-all';
+          cell.dataset.row = r;
+          cell.dataset.col = c;
+          cell.onclick = () => onMazeCellClick(r, c);
+
+          // Check if ball is here
+          if (mazeBallPos.row === r && mazeBallPos.col === c) {
+            const ball = document.createElement('div');
+            ball.className = 'w-3/4 h-3/4 rounded-full bg-[#D5FF00] shadow-[0_0_16px_#D5FF00] border border-black/40 animate-pulse';
+            cell.appendChild(ball);
+          } else {
+            // Check step history
+            const histItem = mazeHistory.find(h => h.row === r && h.col === c);
+            if (histItem) {
+              const badge = document.createElement('span');
+              badge.className = 'text-xs font-black font-mono text-black/50 bg-black/10 px-1.5 py-0.5 rounded-full';
+              badge.textContent = histItem.step;
+              cell.appendChild(badge);
+            }
+          }
+
+          grid.appendChild(cell);
+        }
+      }
+    }
+
+    function onMazeCellClick(r, c) {
+      mazeBallPos = { row: r, col: c };
+      const existing = mazeHistory.find(h => h.row === r && h.col === c);
+      if (!existing) {
+        mazeHistory.push({ row: r, col: c, step: mazeHistory.length + 1 });
+      }
+      playTickSound();
+      renderMazeGrid();
+    }
+
+    function resetMazeBall() {
+      mazeBallPos = { row: 0, col: 1 };
+      mazeHistory = [{ row: 0, col: 1, step: 1 }];
+      renderMazeGrid();
+    }
+
+    function clearMazeSteps() {
+      mazeHistory = [{ row: mazeBallPos.row, col: mazeBallPos.col, step: 1 }];
+      renderMazeGrid();
+    }
+
+    // --- 9. LOCAL VIDEO BRIEFING MODAL (CÁCH 1: OFFLINE) ---
+    function openVideoModal() {
+      const current = challengesData[activeChallengeId];
+      const modal = document.getElementById('videoBriefingModal');
+      const videoEl = document.getElementById('briefingLocalVideo');
+      const srcEl = document.getElementById('briefingVideoSource');
+      const titleEl = document.getElementById('videoModalTitle');
+      const statusPill = document.getElementById('videoStatusPill');
+      const errorOverlay = document.getElementById('videoErrorOverlay');
+
+      titleEl.textContent = current.title;
+      statusPill.textContent = `Đang phát: ${current.videoSrc}`;
+      document.getElementById('videoErrorPathText').innerHTML = `Đường dẫn dự kiến: <code class="text-volt">${current.videoSrc}</code>`;
+
+      errorOverlay.classList.add('hidden');
+      errorOverlay.classList.remove('flex');
+
+      srcEl.src = current.videoSrc;
+      videoEl.load();
+
+      videoEl.onerror = () => {
+        errorOverlay.classList.remove('hidden');
+        errorOverlay.classList.add('flex');
+      };
+
+      videoEl.play().catch(e => {
+        // Autoplay may need click or file not found
+      });
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeVideoModal() {
+      const modal = document.getElementById('videoBriefingModal');
+      const videoEl = document.getElementById('briefingLocalVideo');
+      videoEl.pause();
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function handleManualLocalVideo(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const fileURL = URL.createObjectURL(file);
+      const current = challengesData[activeChallengeId];
+      current.videoSrc = fileURL;
+
+      const videoEl = document.getElementById('briefingLocalVideo');
+      const srcEl = document.getElementById('briefingVideoSource');
+      const errorOverlay = document.getElementById('videoErrorOverlay');
+
+      errorOverlay.classList.add('hidden');
+      errorOverlay.classList.remove('flex');
+
+      srcEl.src = fileURL;
+      videoEl.load();
+      videoEl.play();
+      document.getElementById('videoStatusPill').textContent = `Đang phát file máy tính: ${file.name}`;
+    }
+
+    function retryCurrentVideo() {
+      const videoEl = document.getElementById('briefingLocalVideo');
+      const current = challengesData[activeChallengeId];
+      document.getElementById('briefingVideoSource').src = current.videoSrc;
+      videoEl.load();
+      videoEl.play();
+    }
+
+    // --- 10. GET READY 3 - 2 - 1 CLIMAX COUNTDOWN ---
+    function launchGetReadyCountdown() {
+      closeVideoModal();
+      const overlay = document.getElementById('getReadyOverlay');
+      const numEl = document.getElementById('getReadyNumber');
+      const subEl = document.getElementById('getReadySubtext');
+
+      overlay.classList.remove('hidden');
+      overlay.classList.add('flex');
+
+      let count = 3;
+      const sequence = [
+        { val: 3, text: 'SẴN SÀNG...', freq: 440 },
+        { val: 2, text: 'TẬP TRUNG CAO ĐỘ...', freq: 554 },
+        { val: 1, text: 'BẮT ĐẦU TRONG GIÂY LÁT...', freq: 659 },
+        { val: 'BẮT ĐẦU!', text: 'CHIẾN ĐẤU HẾT MÌNH!', freq: 880 }
+      ];
+
+      function stepCountdown(idx) {
+        if (idx >= sequence.length) {
+          overlay.classList.add('hidden');
+          overlay.classList.remove('flex');
+          // Automatically start the timer
+          const current = challengesData[activeChallengeId];
+          current.isRunning = true;
+          startTimerLoop();
+          triggerSparkBurst();
+          updateDisplay();
+          return;
+        }
+
+        const item = sequence[idx];
+        numEl.textContent = item.val;
+        subEl.textContent = item.text;
+        playUrgentBeep(item.freq);
+
+        numEl.style.transform = 'scale(1.25)';
+        setTimeout(() => { numEl.style.transform = 'scale(1)'; }, 150);
+
+        setTimeout(() => {
+          stepCountdown(idx + 1);
+        }, 1000);
+      }
+
+      stepCountdown(0);
+    }
+
+    // --- 11. CONFETTI & SPARKS CANVAS ENGINE ---
+    const canvas = document.getElementById('fxCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function triggerConfettiFireworks() {
+      const colors = ['#D5FF00', '#FFFFFF', '#ADC700', '#00F0FF', '#FF3B30'];
+      for (let i = 0; i < 150; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          vx: (Math.random() - 0.5) * 22,
+          vy: (Math.random() - 0.5) * 22 - 4,
+          size: Math.random() * 8 + 3,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          decay: Math.random() * 0.015 + 0.008,
+          rotation: Math.random() * 360,
+          vRot: (Math.random() - 0.5) * 12
+        });
+      }
+      renderFX();
+    }
+
+    function triggerSparkBurst() {
+      for (let i = 0; i < 60; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          vx: (Math.random() - 0.5) * 16,
+          vy: (Math.random() - 0.5) * 16,
+          size: Math.random() * 5 + 2,
+          color: '#D5FF00',
+          alpha: 1,
+          decay: 0.03,
+          rotation: 0,
+          vRot: 0
+        });
+      }
+      renderFX();
+    }
+
+    let fxActive = false;
+    function renderFX() {
+      if (fxActive) return;
+      fxActive = true;
+
+      function fxLoop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35; // gravity
+          p.alpha -= p.decay;
+          p.rotation += p.vRot;
+
+          if (p.alpha <= 0) {
+            particles.splice(i, 1);
+            continue;
+          }
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rotation * Math.PI) / 180);
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+          ctx.restore();
+        }
+
+        if (particles.length > 0) {
+          requestAnimationFrame(fxLoop);
+        } else {
+          fxActive = false;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      requestAnimationFrame(fxLoop);
+    }
+
+    // --- 12. UTILITY & SETTINGS ---
+    function toggleMute() {
+      isSoundMuted = !isSoundMuted;
+      document.getElementById('soundIconOn').classList.toggle('hidden', isSoundMuted);
+      document.getElementById('soundIconOff').classList.toggle('hidden', !isSoundMuted);
+      const sBtn = document.getElementById('settingsAudioBtn');
+      sBtn.textContent = isSoundMuted ? 'TẮT' : 'BẬT';
+      sBtn.className = isSoundMuted ? 'px-3 py-1.5 rounded-xl bg-white/10 text-white/50 text-xs font-black uppercase' : 'px-3 py-1.5 rounded-xl bg-volt text-black text-xs font-black uppercase';
+    }
+
+    function toggleMillisDisplay() {
+      showMilliseconds = !showMilliseconds;
+      document.getElementById('dialMillisBlock').classList.toggle('hidden', !showMilliseconds);
+      const mBtn = document.getElementById('settingsMillisBtn');
+      mBtn.textContent = showMilliseconds ? 'BẬT' : 'TẮT';
+      mBtn.className = showMilliseconds ? 'px-3 py-1.5 rounded-xl bg-volt text-black text-xs font-black uppercase' : 'px-3 py-1.5 rounded-xl bg-white/10 text-white/50 text-xs font-black uppercase';
+    }
+
+    function toggleSettings() {
+      const drawer = document.getElementById('settingsDrawer');
+      const backdrop = document.getElementById('settingsDrawerBackdrop');
+      const isClosed = drawer.classList.contains('translate-x-full');
+      if (isClosed) {
+        drawer.classList.remove('translate-x-full');
+        backdrop.classList.remove('hidden');
+      } else {
+        drawer.classList.add('translate-x-full');
+        backdrop.classList.add('hidden');
+      }
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {});
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+
+    function adjustCurrentMinutes(deltaMin) {
+      const current = challengesData[activeChallengeId];
+      const newSec = Math.max(10, current.totalSec + (deltaMin * 60));
+      current.totalSec = newSec;
+      current.remainingMs = newSec * 1000;
+      const m = Math.floor(newSec / 60);
+      const s = newSec % 60;
+      document.getElementById('settingsDurationDisplay').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      updateDisplay();
+    }
+
+    function setCurrentDuration(sec) {
+      const current = challengesData[activeChallengeId];
+      current.totalSec = sec;
+      current.remainingMs = sec * 1000;
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      document.getElementById('settingsDurationDisplay').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      updateDisplay();
+    }
+
+    function resetAllChallengesData() {
+      if (confirm('Làm mới lại toàn bộ 4 Challenge và xóa hết các mốc?')) {
+        for (let i = 1; i <= 4; i++) {
+          challengesData[i].totalSec = 180;
+          challengesData[i].remainingMs = 180000;
+          challengesData[i].isRunning = false;
+          challengesData[i].marks = [];
+        }
+        resetMazeBall();
+        switchChallenge(activeChallengeId);
+        toggleSettings();
+      }
+    }
+
+    // --- 13. KEYBOARD SHORTCUTS ---
+    window.addEventListener('keydown', (e) => {
+      // Don't trigger shortcuts when typing in inputs
+      if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+
+      if (e.key === ' ') {
+        e.preventDefault();
+        toggleTimer();
+      } else if (e.key === 'm' || e.key === 'M' || e.key === 'l' || e.key === 'L') {
+        recordTimeMark();
+      } else if (e.key === 'r' || e.key === 'R') {
+        resetCurrentTimer();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      } else if (e.key === 'v' || e.key === 'V') {
+        const modal = document.getElementById('videoBriefingModal');
+        if (modal.classList.contains('hidden')) {
+          openVideoModal();
+        } else {
+          closeVideoModal();
+        }
+      } else if (e.key === 's' || e.key === 'S') {
+        toggleSettings();
+      } else if (['1', '2', '3', '4'].includes(e.key)) {
+        switchChallenge(parseInt(e.key));
+      }
+    });
+
+    // Initial setup
+    switchChallenge(1);
+    updateDisplay();
+  </script>
+</body>
+</html>
