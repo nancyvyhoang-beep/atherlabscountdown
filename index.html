@@ -423,19 +423,53 @@
       </div>
 
       <div class="space-y-5 mt-6">
-        <!-- Duration Settings per Challenge -->
+        <!-- Duration Settings per Challenge: Nhập tay Giờ - Phút - Giây -->
         <div>
-          <label class="text-xs font-bold uppercase text-white/60 tracking-wider block mb-2">Thời gian Challenge hiện tại (Phút)</label>
-          <div class="flex items-center gap-3">
-            <button onclick="adjustCurrentMinutes(-1)" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 text-white font-bold text-lg">-</button>
-            <div id="settingsDurationDisplay" class="flex-1 text-center py-2 rounded-xl bg-black border border-white/10 font-mono text-xl font-bold text-volt">03:00</div>
-            <button onclick="adjustCurrentMinutes(1)" class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 text-white font-bold text-lg">+</button>
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-xs font-bold uppercase text-white/70 tracking-wider block">Thời gian Challenge (Nhập tay)</label>
+            <span id="settingsCurrentBadge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-volt/10 text-volt border border-volt/30">CHALLENGE 1</span>
           </div>
-          <div class="grid grid-cols-4 gap-2 mt-3">
-            <button onclick="setCurrentDuration(60)" class="py-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-xs font-mono font-bold text-white/80">1m</button>
-            <button onclick="setCurrentDuration(120)" class="py-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-xs font-mono font-bold text-white/80">2m</button>
-            <button onclick="setCurrentDuration(180)" class="py-1.5 rounded-lg bg-volt/20 hover:bg-volt/30 text-xs font-mono font-bold text-volt border border-volt/30">3m</button>
-            <button onclick="setCurrentDuration(300)" class="py-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-xs font-mono font-bold text-white/80">5m</button>
+
+          <!-- 3 Input Boxes: GIỜ - PHÚT - GIÂY -->
+          <div class="grid grid-cols-3 gap-2.5 bg-black/60 p-3 rounded-2xl border border-white/10">
+            <!-- GIỜ (HOURS) -->
+            <div class="flex flex-col items-center">
+              <span class="text-[10px] font-mono text-white/40 uppercase mb-1">GIỜ</span>
+              <input type="number" id="inputHours" min="0" max="99" value="0" oninput="onManualTimeChange()" class="w-full text-center bg-[#12161D] border border-white/10 focus:border-volt rounded-xl py-2.5 font-mono text-xl sm:text-2xl font-black text-volt outline-none transition-all tabular-nums">
+              <div class="flex items-center gap-1 mt-1.5 w-full">
+                <button onclick="stepInput('inputHours', -1)" class="flex-1 py-1 rounded bg-white/5 hover:bg-white/15 text-xs text-white/70 hover:text-white font-bold transition-all">-</button>
+                <button onclick="stepInput('inputHours', 1)" class="flex-1 py-1 rounded bg-white/5 hover:bg-white/15 text-xs text-white/70 hover:text-white font-bold transition-all">+</button>
+              </div>
+            </div>
+
+            <!-- PHÚT (MINUTES) -->
+            <div class="flex flex-col items-center">
+              <span class="text-[10px] font-mono text-white/40 uppercase mb-1">PHÚT</span>
+              <input type="number" id="inputMinutes" min="0" max="59" value="3" oninput="onManualTimeChange()" class="w-full text-center bg-[#12161D] border border-white/10 focus:border-volt rounded-xl py-2.5 font-mono text-xl sm:text-2xl font-black text-volt outline-none transition-all tabular-nums">
+              <div class="flex items-center gap-1 mt-1.5 w-full">
+                <button onclick="stepInput('inputMinutes', -1)" class="flex-1 py-1 rounded bg-white/5 hover:bg-white/15 text-xs text-white/70 hover:text-white font-bold transition-all">-</button>
+                <button onclick="stepInput('inputMinutes', 1)" class="flex-1 py-1 rounded bg-white/5 hover:bg-white/15 text-xs text-white/70 hover:text-white font-bold transition-all">+</button>
+              </div>
+            </div>
+
+            <!-- GIÂY (SECONDS) -->
+            <div class="flex flex-col items-center">
+              <span class="text-[10px] font-mono text-white/40 uppercase mb-1">GIÂY</span>
+              <input type="number" id="inputSeconds" min="0" max="59" value="0" oninput="onManualTimeChange()" class="w-full text-center bg-[#12161D] border border-white/10 focus:border-volt rounded-xl py-2.5 font-mono text-xl sm:text-2xl font-black text-volt outline-none transition-all tabular-nums">
+              <div class="flex items-center gap-1 mt-1.5 w-full">
+                <button onclick="stepInput('inputSeconds', -1)" class="flex-1 py-1 rounded bg-white/5 hover:bg-white/15 text-xs text-white/70 hover:text-white font-bold transition-all">-</button>
+                <button onclick="stepInput('inputSeconds', 1)" class="flex-1 py-1 rounded bg-white/5 hover:bg-white/15 text-xs text-white/70 hover:text-white font-bold transition-all">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="grid grid-cols-5 gap-1.5 mt-3">
+            <button onclick="applyPresetTime(0, 0, 30)" class="py-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-xs font-mono font-bold text-white/70 hover:text-white transition-all">30s</button>
+            <button onclick="applyPresetTime(0, 1, 0)" class="py-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-xs font-mono font-bold text-white/70 hover:text-white transition-all">1m</button>
+            <button onclick="applyPresetTime(0, 2, 0)" class="py-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-xs font-mono font-bold text-white/70 hover:text-white transition-all">2m</button>
+            <button onclick="applyPresetTime(0, 3, 0)" class="py-1.5 rounded-lg bg-volt/20 hover:bg-volt/30 text-xs font-mono font-bold text-volt border border-volt/30 transition-all">3m</button>
+            <button onclick="applyPresetTime(0, 5, 0)" class="py-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-xs font-mono font-bold text-white/70 hover:text-white transition-all">5m</button>
           </div>
         </div>
 
@@ -648,21 +682,30 @@
       const totalMs = current.totalSec * 1000;
       const fraction = totalMs > 0 ? (current.remainingMs / totalMs) : 0;
 
-      // 1. Digital Digits
+      // 1. Digital Digits (Support Hours if > 0)
       const totalSec = Math.ceil(current.remainingMs / 1000);
-      const m = Math.floor(totalSec / 60);
+      const h = Math.floor(totalSec / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
       const s = totalSec % 60;
       const ms = Math.floor((current.remainingMs % 1000) / 10);
 
+      const hStr = String(h).padStart(2, '0');
       const mStr = String(m).padStart(2, '0');
       const sStr = String(s).padStart(2, '0');
       const msStr = String(ms).padStart(2, '0');
 
-      document.getElementById('dialTimerDigits').textContent = `${mStr}:${sStr}`;
+      const digitsEl = document.getElementById('dialTimerDigits');
+      if (h > 0) {
+        digitsEl.textContent = `${hStr}:${mStr}:${sStr}`;
+        digitsEl.className = digitsEl.className.replace(/text-[5-8]xl/, 'text-4xl sm:text-5xl md:text-6xl');
+      } else {
+        digitsEl.textContent = `${mStr}:${sStr}`;
+        digitsEl.className = digitsEl.className.replace(/text-[4-6]xl/, 'text-6xl sm:text-7xl md:text-8xl');
+      }
       document.getElementById('dialMillisDigits').textContent = msStr;
 
       // 2. Tab Badge update
-      document.getElementById(`tab-time-${activeChallengeId}`).textContent = `${mStr}:${sStr}`;
+      document.getElementById(`tab-time-${activeChallengeId}`).textContent = h > 0 ? `${hStr}:${mStr}:${sStr}` : `${mStr}:${sStr}`;
 
       // 3. SVG Progress Stroke (Continuous Sub-millisecond)
       const offset = CIRCUMFERENCE * (1 - fraction);
@@ -808,10 +851,8 @@
       renderMarksList();
       renderCircumferenceMarkers();
 
-      // Update Settings display
-      const m = Math.floor(challengesData[id].totalSec / 60);
-      const s = challengesData[id].totalSec % 60;
-      document.getElementById('settingsDurationDisplay').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      // Update Settings input boxes
+      syncSettingsInputs();
 
       updateDisplay();
     }
@@ -822,10 +863,21 @@
       const remainingSec = Math.ceil(current.remainingMs / 1000);
       const elapsedSec = Math.max(0, current.totalSec - remainingSec);
 
-      const remM = Math.floor(remainingSec / 60);
+      const remH = Math.floor(remainingSec / 3600);
+      const remM = Math.floor((remainingSec % 3600) / 60);
       const remS = remainingSec % 60;
-      const elM = Math.floor(elapsedSec / 60);
+
+      const elH = Math.floor(elapsedSec / 3600);
+      const elM = Math.floor((elapsedSec % 3600) / 60);
       const elS = elapsedSec % 60;
+
+      const remFormatted = remH > 0 
+        ? `${String(remH).padStart(2, '0')}:${String(remM).padStart(2, '0')}:${String(remS).padStart(2, '0')}`
+        : `${String(remM).padStart(2, '0')}:${String(remS).padStart(2, '0')}`;
+
+      const elFormatted = elH > 0
+        ? `+${String(elH).padStart(2, '0')}:${String(elM).padStart(2, '0')}:${String(elS).padStart(2, '0')}`
+        : `+${String(elM).padStart(2, '0')}:${String(elS).padStart(2, '0')}`;
 
       const now = new Date();
       const timeStr = now.toTimeString().split(' ')[0];
@@ -833,8 +885,8 @@
       const newMark = {
         id: Date.now(),
         index: current.marks.length + 1,
-        remainingFormatted: `${String(remM).padStart(2, '0')}:${String(remS).padStart(2, '0')}`,
-        elapsedFormatted: `+${String(elM).padStart(2, '0')}:${String(elS).padStart(2, '0')}`,
+        remainingFormatted: remFormatted,
+        elapsedFormatted: elFormatted,
         timestamp: timeStr,
         note: `Mốc #${current.marks.length + 1}`
       };
@@ -1236,6 +1288,7 @@
       const backdrop = document.getElementById('settingsDrawerBackdrop');
       const isClosed = drawer.classList.contains('translate-x-full');
       if (isClosed) {
+        syncSettingsInputs();
         drawer.classList.remove('translate-x-full');
         backdrop.classList.remove('hidden');
       } else {
@@ -1252,25 +1305,50 @@
       }
     }
 
-    function adjustCurrentMinutes(deltaMin) {
+    function syncSettingsInputs() {
       const current = challengesData[activeChallengeId];
-      const newSec = Math.max(10, current.totalSec + (deltaMin * 60));
-      current.totalSec = newSec;
-      current.remainingMs = newSec * 1000;
-      const m = Math.floor(newSec / 60);
-      const s = newSec % 60;
-      document.getElementById('settingsDurationDisplay').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      const h = Math.floor(current.totalSec / 3600);
+      const m = Math.floor((current.totalSec % 3600) / 60);
+      const s = current.totalSec % 60;
+
+      const inH = document.getElementById('inputHours');
+      const inM = document.getElementById('inputMinutes');
+      const inS = document.getElementById('inputSeconds');
+      const badge = document.getElementById('settingsCurrentBadge');
+
+      if (inH) inH.value = h;
+      if (inM) inM.value = m;
+      if (inS) inS.value = s;
+      if (badge) badge.textContent = `CHALLENGE ${activeChallengeId}`;
+    }
+
+    function onManualTimeChange() {
+      const inH = parseInt(document.getElementById('inputHours').value) || 0;
+      const inM = parseInt(document.getElementById('inputMinutes').value) || 0;
+      const inS = parseInt(document.getElementById('inputSeconds').value) || 0;
+
+      const totalSec = Math.max(1, inH * 3600 + inM * 60 + inS);
+      const current = challengesData[activeChallengeId];
+      current.totalSec = totalSec;
+      current.remainingMs = totalSec * 1000;
+      current.isRunning = false;
       updateDisplay();
     }
 
-    function setCurrentDuration(sec) {
-      const current = challengesData[activeChallengeId];
-      current.totalSec = sec;
-      current.remainingMs = sec * 1000;
-      const m = Math.floor(sec / 60);
-      const s = sec % 60;
-      document.getElementById('settingsDurationDisplay').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-      updateDisplay();
+    function stepInput(inputId, delta) {
+      const el = document.getElementById(inputId);
+      let val = (parseInt(el.value) || 0) + delta;
+      if (inputId === 'inputHours') val = Math.max(0, Math.min(99, val));
+      else val = Math.max(0, Math.min(59, val));
+      el.value = val;
+      onManualTimeChange();
+    }
+
+    function applyPresetTime(h, m, s) {
+      document.getElementById('inputHours').value = h;
+      document.getElementById('inputMinutes').value = m;
+      document.getElementById('inputSeconds').value = s;
+      onManualTimeChange();
     }
 
     function resetAllChallengesData() {
