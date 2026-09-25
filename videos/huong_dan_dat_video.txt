@@ -1,0 +1,5 @@
+Hãy copy 4 file video MP4 của bạn vào thư mục này với tên:
+- game1.mp4
+- game2.mp4
+- game3.mp4
+- game4.mp4
